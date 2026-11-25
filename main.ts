@@ -21,8 +21,11 @@ const ENTRY: string =
   'My performance review says "exceeds expectations" but my salary says "meets budget".';
 
 // Gate validation: UTF-8, 1-200 characters, single line, not only whitespace.
-if (ENTRY.length < 1 || ENTRY.length > 200) {
-  throw new Error(`ENTRY length ${ENTRY.length} out of range 1-200`);
+// Count code points ([...ENTRY].length), not UTF-16 units, so the count
+// matches the gate's character count even for non-ASCII text.
+const charCount = [...ENTRY].length;
+if (charCount < 1 || charCount > 200) {
+  throw new Error(`ENTRY length ${charCount} out of range 1-200`);
 }
 if (ENTRY.trim().length === 0) {
   throw new Error("ENTRY is only whitespace");
@@ -40,5 +43,5 @@ if (back !== ENTRY) {
   throw new Error("verification failed: /output/entry.txt differs from ENTRY");
 }
 
-console.log(`wrote /output/entry.txt (${ENTRY.length} chars, verified byte-identical)`);
+console.log(`wrote /output/entry.txt (${charCount} chars, verified byte-identical)`);
 console.log(ENTRY);
